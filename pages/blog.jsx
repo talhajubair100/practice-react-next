@@ -2,6 +2,8 @@ import HomeLayout from '@/layouts/Home'
 import React, { useState } from 'react'
 import { data } from '.././public/data'
 import { Button, Table, Input, Modal, Form } from 'antd';
+import { motion, useScroll } from "framer-motion"
+
 
 
 const Blog = () => {
@@ -35,6 +37,9 @@ const Blog = () => {
     console.log('Failed:', errorInfo);
   };
 
+  const { scrollYProgress } = useScroll();
+
+
   const FilterByNameInput = (
     <Input
       placeholder="Search Name"
@@ -58,16 +63,21 @@ const Blog = () => {
       title: 'First Name',
       dataIndex: 'first_name',
       key: 'first_name',
+      sorter: (a, b) => a.first_name.length - b.first_name.length,
+      
     },
     {
       title: 'Last Name',
       dataIndex: 'last_name',
       key: 'last_name',
+      sorter: (a, b) => a.last_name.length - b.last_name.length,
+
     },
     {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
+      
     },
     {
       title: 'Phone Number',
@@ -76,8 +86,16 @@ const Blog = () => {
     }
   ];
 
+  const onChange = (pagination, sorter, extra) => {
+    console.log('params', pagination, sorter, extra);
+  };
+
   return (
     <div className='container mx-auto'>
+     <motion.div
+        className="progress-bar"
+        style={{ scaleX: scrollYProgress }}
+      />
       <h1>Blog</h1>
       <p>Search by Name</p>
       <div className="flex space-x-96 my-6">
@@ -93,6 +111,7 @@ const Blog = () => {
         dataSource={dataSource}
         columns={columns}
         shadow={true}
+        onChange={onChange}
       />
       <Modal title="Form Input" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <Form
@@ -159,6 +178,7 @@ const Blog = () => {
             name="email"
             rules={[
               {
+                type: 'email',
                 required: true,
                 message: 'Please input your Email Address !',
               },
